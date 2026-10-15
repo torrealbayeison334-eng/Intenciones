@@ -69,7 +69,7 @@ begin
   returning attempts into v_attempts;
   if v_attempts > p_limit then raise exception 'rate_limit'; end if;
 end $$;
-revoke all on function public.check_request_limit(text,integer) from public;
+revoke all on function public.check_request_limit(text,integer) from public, anon, authenticated;
 grant execute on function public.check_request_limit(text,integer) to service_role;
 
 create function public.create_intention(p_submission_id uuid,p_name text,p_message text,p_kind text,p_rate_key text)
@@ -87,7 +87,7 @@ begin
     gratitudes = gratitudes + case when p_kind = 'gratitude' then 1 else 0 end;
   return v_id;
 end $$;
-revoke all on function public.create_intention(uuid,text,text,text,text) from public;
+revoke all on function public.create_intention(uuid,text,text,text,text) from public, anon, authenticated;
 grant execute on function public.create_intention(uuid,text,text,text,text) to service_role;
 
 -- Row locking ensures that two simultaneous opens count exactly one first read.
@@ -106,7 +106,7 @@ begin
   end if;
   return next v_row;
 end $$;
-revoke all on function public.open_intention(uuid) from public;
+revoke all on function public.open_intention(uuid) from public, anon, authenticated;
 grant execute on function public.open_intention(uuid) to authenticated;
 
 create table public.intercessor_credentials (
@@ -126,7 +126,7 @@ begin
   insert into public.members(user_id,display_name,role,approved) values(p_user_id,p_username,'intercessor',true);
   update public.community_totals set intercessors = intercessors + 1;
 end $$;
-revoke all on function public.register_intercessor(uuid,text,text) from public;
+revoke all on function public.register_intercessor(uuid,text,text) from public, anon, authenticated;
 grant execute on function public.register_intercessor(uuid,text,text) to service_role;
 
 -- Reserve the one-use recovery code before changing Auth's password. A failed
@@ -149,7 +149,7 @@ begin
   where user_id=p_user_id and recovery_pending_hash=p_next_hash;
   return found;
 end $$;
-revoke all on function public.reserve_recovery(text,text,text),public.finish_recovery(uuid,text,boolean) from public;
+revoke all on function public.reserve_recovery(text,text,text),public.finish_recovery(uuid,text,boolean) from public, anon, authenticated;
 grant execute on function public.reserve_recovery(text,text,text),public.finish_recovery(uuid,text,boolean) to service_role;
 
 create or replace function public.cleanup_personal_data() returns void

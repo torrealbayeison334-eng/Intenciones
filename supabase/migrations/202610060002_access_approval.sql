@@ -2,7 +2,7 @@ create function public.find_auth_user(p_email text) returns uuid
 language sql security definer set search_path = '' as $$
   select id from auth.users where lower(email) = lower(p_email) limit 1;
 $$;
-revoke all on function public.find_auth_user(text) from public;
+revoke all on function public.find_auth_user(text) from public, anon, authenticated;
 grant execute on function public.find_auth_user(text) to service_role;
 
 create function public.approve_access_request(p_id uuid, p_user_id uuid, p_admin_id uuid) returns boolean
@@ -22,5 +22,5 @@ begin
   return true;
 end;
 $$;
-revoke all on function public.approve_access_request(uuid, uuid, uuid) from public;
+revoke all on function public.approve_access_request(uuid, uuid, uuid) from public, anon, authenticated;
 grant execute on function public.approve_access_request(uuid, uuid, uuid) to service_role;

@@ -77,10 +77,10 @@ grant all on public.members, public.intentions, public.intention_contacts, publi
 create function public.is_intercessor() returns boolean language sql stable security definer set search_path = '' as $$
   select exists (select 1 from public.members where user_id = auth.uid() and approved and role in ('priest', 'intercessor'));
 $$;
-revoke all on function public.is_intercessor() from public;
+revoke all on function public.is_intercessor() from public, anon, authenticated;
 grant execute on function public.is_intercessor() to authenticated;
 
-create policy own_membership on public.members for select to authenticated using (user_id = auth.uid());
+create policy own_membership on public.members for select to authenticated using (user_id = (select auth.uid()));
 create policy available_intentions on public.intentions for select to authenticated using (
   public.is_intercessor() and (status = 'pending' or (status = 'assigned' and assigned_to = auth.uid()))
 );
@@ -102,7 +102,7 @@ begin
   return v_id;
 end;
 $$;
-revoke all on function public.create_intention(uuid, text, text, text, text) from public;
+revoke all on function public.create_intention(uuid, text, text, text, text) from public, anon, authenticated;
 grant execute on function public.create_intention(uuid, text, text, text, text) to service_role;
 
 create function public.create_access_request(p_submission_id uuid, p_name text, p_email text, p_community text, p_message text)
@@ -120,7 +120,7 @@ begin
   return v_id;
 end;
 $$;
-revoke all on function public.create_access_request(uuid, text, text, text, text) from public;
+revoke all on function public.create_access_request(uuid, text, text, text, text) from public, anon, authenticated;
 grant execute on function public.create_access_request(uuid, text, text, text, text) to service_role;
 
 create function public.claim_intention(p_id uuid) returns setof public.intentions
@@ -137,7 +137,7 @@ begin
   return next v_row;
 end;
 $$;
-revoke all on function public.claim_intention(uuid) from public;
+revoke all on function public.claim_intention(uuid) from public, anon, authenticated;
 grant execute on function public.claim_intention(uuid) to authenticated;
 
 create function public.complete_intention(p_id uuid) returns boolean
@@ -154,7 +154,7 @@ begin
   return true;
 end;
 $$;
-revoke all on function public.complete_intention(uuid) from public;
+revoke all on function public.complete_intention(uuid) from public, anon, authenticated;
 grant execute on function public.complete_intention(uuid) to authenticated;
 
 create function public.release_intention(p_id uuid) returns boolean
@@ -167,7 +167,7 @@ begin
   return true;
 end;
 $$;
-revoke all on function public.release_intention(uuid) from public;
+revoke all on function public.release_intention(uuid) from public, anon, authenticated;
 grant execute on function public.release_intention(uuid) to authenticated;
 
 -- Resend's idempotency window is 24h. Stop automatic retries before it expires.
@@ -189,7 +189,7 @@ begin
     from public.intention_contacts c where c.intention_id = v_job.intention_id;
 end;
 $$;
-revoke all on function public.take_email_job() from public;
+revoke all on function public.take_email_job() from public, anon, authenticated;
 grant execute on function public.take_email_job() to service_role;
 
 create function public.finish_email_job(p_id uuid, p_lease uuid, p_provider_id text) returns boolean
@@ -200,7 +200,7 @@ begin
   return found;
 end;
 $$;
-revoke all on function public.finish_email_job(uuid, uuid, text) from public;
+revoke all on function public.finish_email_job(uuid, uuid, text) from public, anon, authenticated;
 grant execute on function public.finish_email_job(uuid, uuid, text) to service_role;
 
 create function public.retry_email_job(p_id uuid, p_lease uuid, p_error text) returns boolean
@@ -212,7 +212,7 @@ begin
   return found;
 end;
 $$;
-revoke all on function public.retry_email_job(uuid, uuid, text) from public;
+revoke all on function public.retry_email_job(uuid, uuid, text) from public, anon, authenticated;
 grant execute on function public.retry_email_job(uuid, uuid, text) to service_role;
 
 create function public.cleanup_personal_data() returns void
@@ -223,5 +223,5 @@ begin
   delete from public.access_requests where created_at < now() - interval '180 days';
 end;
 $$;
-revoke all on function public.cleanup_personal_data() from public;
+revoke all on function public.cleanup_personal_data() from public, anon, authenticated;
 grant execute on function public.cleanup_personal_data() to service_role;

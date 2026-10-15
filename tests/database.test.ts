@@ -12,6 +12,9 @@ before(async()=>{
     create schema auth;create table auth.users(id uuid primary key,email text unique);
     create function auth.uid() returns uuid language sql stable as $$select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid;$$;
     grant usage on schema auth to authenticated;grant execute on function auth.uid() to authenticated;`);
+  // Supabase can grant named API roles EXECUTE by default. Revoking PUBLIC
+  // alone must not leave anonymous or authenticated access to server RPCs.
+  await db.exec('alter default privileges in schema public grant execute on functions to anon, authenticated, service_role;');
   for(const name of ['202610060001_initial.sql','202610060002_access_approval.sql']) await db.exec(await readFile(new URL(`../supabase/migrations/${name}`,import.meta.url),'utf8'));
   await db.query('insert into auth.users(id,email) values($1,$2)',[legacyUser,'legacy@example.com']);
   await db.query("insert into public.members(user_id,display_name,role,approved) values($1,'Legado','priest',true)",[legacyUser]);

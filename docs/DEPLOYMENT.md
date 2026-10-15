@@ -55,6 +55,22 @@ Comprobar `cron.job` y `cron.job_run_details` después de activar. Las copias de
 
 ## 5. Compilar y publicar el sitio
 
+### Cloudflare Workers con Git
+
+El repositorio incluye `wrangler.jsonc` para publicar los archivos estáticos de `dist/`. No requiere el adaptador de Astro para Cloudflare. La configuración explícita evita que Wrangler intente modificar el proyecto automáticamente con `astro add cloudflare`.
+
+En Workers → proyecto → Settings → Build, usar:
+
+- Repositorio `torrealbayeison334-eng/Intenciones`, rama `main`, directorio raíz del repositorio.
+- Build command: `npm run build`.
+- Deploy command: `npx wrangler deploy`.
+- Nombre del Worker: `intenciones`, coincidente con `wrangler.jsonc`. Si se usa otro nombre, debe coincidir con la configuración o especificarse mediante `--name` en el comando de despliegue.
+- Build variables: `NODE_VERSION=22` y las variables públicas indicadas a continuación. Para la primera publicación de demostración, basta `PUBLIC_DEMO_MODE=true`.
+
+La dirección pública de Workers termina en `.workers.dev`; usar el origen real al configurar Supabase y el widget de Turnstile. Después de cambiar el repositorio, iniciar una compilación del último commit de `main`.
+
+Referencia: https://developers.cloudflare.com/workers/ci-cd/builds/configuration/
+
 En Cloudflare conservar el alojamiento existente y configurar únicamente estas variables públicas:
 
 ```text

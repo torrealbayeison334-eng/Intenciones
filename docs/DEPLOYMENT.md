@@ -1,5 +1,7 @@
 # Activar Intención e Intercesor
 
+Para el proyecto nuevo `nlfujsfwocdferdjxttm`, consultar primero [el estado de activación y su historial de migraciones](ACTIVACION-INTENCIONES.md). La base y las funciones ya están desplegadas; no repetir las migraciones iniciales.
+
 El código permite demostración sin servicios externos. Aplicar estos pasos en el proyecto Supabase y el sitio Cloudflare del responsable; no introducir contraseñas ni claves privadas en el chat, GitHub o el navegador.
 
 ## 1. Actualizar la base de datos

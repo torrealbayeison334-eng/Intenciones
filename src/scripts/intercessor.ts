@@ -45,6 +45,15 @@ tabs.forEach((tab,index)=>{
 });
 function fromHash(){if(intercessorActive||location.hash==='#intercesor') activateTab('tab-intercessor');}
 window.addEventListener('hashchange',fromHash);fromHash();
+// Handle repeated clicks too: the hash may already be #intercesor after the
+// visitor switches back to Intención. Native hashchange would not fire again.
+document.querySelectorAll<HTMLAnchorElement>('a[href="/#intercesor"],a[href="#intercesor"]').forEach(link=>link.addEventListener('click',event=>{
+  if(event.ctrlKey||event.metaKey||event.shiftKey||event.altKey||event.button!==0)return;
+  event.preventDefault();activateTab('tab-intercessor');
+  if(location.hash!=='#intercesor')history.pushState(null,'','#intercesor');
+  document.querySelector('#intercesor')!.scrollIntoView({block:'start'});
+  root.querySelector<HTMLElement>(intercessorActive?'#inbox-title':'#intercessor-username')!.focus({preventScroll:true});
+}));
 const demoEntries:Entry[]=[
   {id:'demo-1',name:'María',kind:'petition',created_at:new Date().toISOString(),read_at:null,message:'Por la salud de mi familia y por quienes hoy necesitan encontrar esperanza.'},
   {id:'demo-2',name:'Un corazón agradecido',kind:'gratitude',created_at:new Date(Date.now()-3600000).toISOString(),read_at:null,message:'Gracias, María, por acompañarnos en los momentos difíciles y por las personas que nos dan una mano.'},
@@ -57,7 +66,7 @@ const put=(id:string,text:string)=>{root.querySelector(id)!.textContent=text;};
 function renderStats(){
   put('#stat-petitions',String(totals.petitions));put('#stat-gratitudes',String(totals.gratitudes));
   put('#stat-petitions-read',`${totals.petitions_read} leídas`);put('#stat-gratitudes-read',`${totals.gratitudes_read} leídos`);
-  put('#stat-read',String(Number(totals.petitions_read)+Number(totals.gratitudes_read)));put('#stat-intercessors',String(totals.intercessors));
+  put('#stat-total-petitions',String(totals.petitions));put('#stat-intercessors',String(totals.intercessors));
 }
 function render(){
   list.replaceChildren();

@@ -43,13 +43,29 @@ test('tabs support keyboard and direct Intercesor links',async({page})=>{
   await first.focus();await page.keyboard.press('ArrowRight');await expect(second).toBeFocused();await expect(second).toHaveAttribute('aria-selected','true');
   await page.keyboard.press('Home');await expect(first).toBeFocused();await page.goto('/#intercesor');await expect(second).toHaveAttribute('aria-selected','true');
 });
+test('footer Intercesor opens and focuses access even when the URL hash is unchanged',async({page})=>{
+  await page.goto('/');const footer=page.locator('footer');
+  await expect(footer).not.toContainText('Textos pendientes de revisión pastoral');
+  await footer.getByRole('link',{name:'Intercesor',exact:true}).click();
+  await expect(page).toHaveURL(/#intercesor$/);await expect(page.locator('#intercessor-username')).toBeFocused();
+  await expect(page.getByRole('tab',{name:'Intercesor',exact:true})).toHaveAttribute('aria-selected','true');
+  await page.getByRole('tab',{name:'Intención',exact:true}).click();
+  await footer.getByRole('link',{name:'Intercesor',exact:true}).click();
+  await expect(page.locator('#intercessor-username')).toBeFocused();await expect(page.locator('#panel-intention')).toBeHidden();
+  await page.getByRole('button',{name:'Explorar la bandeja'}).click();
+  await footer.getByRole('link',{name:'Intercesor',exact:true}).click();
+  await expect(page.locator('#inbox-title')).toBeFocused();await expect(page.locator('#intercessor-dashboard')).toBeVisible();
+  await page.goto('/templos/');await page.locator('footer').getByRole('link',{name:'Intercesor',exact:true}).click();
+  await expect(page.getByRole('tab',{name:'Intercesor',exact:true})).toHaveAttribute('aria-selected','true');
+  await expect(page.locator('#intercessor-login')).toBeVisible();
+});
 test('opening marks a message read, keeps it available and never counts a reread twice',async({page})=>{
   await page.goto('/#intercesor');await page.getByRole('button',{name:'Explorar la bandeja'}).click();
-  const items=page.locator('#inbox-list .inbox-item');await expect(items).toHaveCount(2);await expect(page.locator('#stat-read')).toHaveText('1');
-  await items.first().click();const dialog=page.getByRole('dialog');await expect(dialog).toBeVisible();await expect(dialog).toContainText('Por la salud de mi familia');await expect(page.locator('#stat-read')).toHaveText('2');
+  const items=page.locator('#inbox-list .inbox-item');await expect(items).toHaveCount(2);await expect(page.locator('#stat-total-petitions')).toHaveText('2');await expect(page.locator('#stat-petitions-read')).toHaveText('1 leídas');
+  await items.first().click();const dialog=page.getByRole('dialog');await expect(dialog).toBeVisible();await expect(dialog).toContainText('Por la salud de mi familia');await expect(page.locator('#stat-total-petitions')).toHaveText('2');await expect(page.locator('#stat-petitions-read')).toHaveText('2 leídas');
   await page.getByRole('button',{name:'Cerrar mensaje',exact:true}).click();await expect(items).toHaveCount(1);
   await page.getByRole('button',{name:'Leídos',exact:true}).click();await expect(items).toHaveCount(2);await expect(items.first()).toContainText('Leído');
-  await items.first().click();await expect(dialog).toBeVisible();await expect(page.locator('#stat-read')).toHaveText('2');await page.keyboard.press('Escape');await expect(dialog).not.toBeVisible();
+  await items.first().click();await expect(dialog).toBeVisible();await expect(page.locator('#stat-petitions-read')).toHaveText('2 leídas');await page.keyboard.press('Escape');await expect(dialog).not.toBeVisible();
   await page.getByRole('button',{name:'Todos',exact:true}).click();await expect(items).toHaveCount(3);
   await expect(page.getByRole('button',{name:/archivar|borrar|mover|marcar como rezada/i})).toHaveCount(0);
   await page.getByRole('button',{name:'Cerrar sesión'}).click();await expect(page.locator('#intercessor-dashboard')).toBeHidden();await expect(page.locator('#inbox-list')).toBeEmpty();

@@ -10,3 +10,13 @@ test-results/
 .DS_Store
 supabase/.temp/
 supabase/.branches/
+private-backups/
+backups/
+*.dump
+*.backup
+/roles.sql
+/schema.sql
+/data.sql
+/auth-data.sql
+/history_schema.sql
+/history_data.sql

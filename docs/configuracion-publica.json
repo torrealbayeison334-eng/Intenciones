@@ -1,0 +1,123 @@
+{
+  "generated_at_utc": "2026-10-16T02:18:41.754Z",
+  "scope": "Public configuration and aggregate checkpoint only. No private credentials, accounts or message contents.",
+  "private_database_backup_created": false,
+  "source_code_commit": "a0121d51b79f36cbd1ba891793c13d7d82ef6e19",
+  "repository": {
+    "url": "https://github.com/torrealbayeison334-eng/Intenciones",
+    "owner": "torrealbayeison334-eng",
+    "branch": "main",
+    "visibility": "public"
+  },
+  "cloudflare": {
+    "worker_name": "intenciones",
+    "production_url": "https://intenciones.torrealbayeison334.workers.dev",
+    "build_command": "npm run build",
+    "deploy_command": "npx wrangler deploy",
+    "assets_directory": "dist",
+    "node_version": "22"
+  },
+  "frontend_build_variables": {
+    "PUBLIC_DEMO_MODE": "false",
+    "PUBLIC_SUPABASE_URL": "https://nlfujsfwocdferdjxttm.supabase.co",
+    "PUBLIC_SUPABASE_ANON_KEY": "sb_publishable_rOIJPDtNUfANt2fW86FgbQ_3-fr5b-T",
+    "PUBLIC_TURNSTILE_SITE_KEY": "0x4AAAAAAFYBZ5-qSG4RHlO6"
+  },
+  "supabase": {
+    "project_ref": "nlfujsfwocdferdjxttm",
+    "project_name": "intenciones prueba",
+    "region": "ca-central-1",
+    "postgres_major_version": 17,
+    "remote_migrations": [
+      {
+        "version": "20261015174633",
+        "name": "misterio_initial_with_shared_inbox"
+      },
+      {
+        "version": "20261015174655",
+        "name": "schedule_read_message_retention"
+      },
+      {
+        "version": "20261016004000",
+        "name": "scope_community_counter_updates"
+      }
+    ],
+    "active_functions": [
+      {
+        "name": "intercessor-auth",
+        "version": 7,
+        "verify_jwt": false,
+        "source_sha256": "d41c4acb3880a2d79399de66d67cdf4620481ff10b17a93c61461cdab2c12765"
+      },
+      {
+        "name": "submit-intention",
+        "version": 6,
+        "verify_jwt": false,
+        "source_sha256": "8304603ecc24a58c72a84497149b6bad43e0612bfba70de52971178aad8e1405"
+      }
+    ],
+    "email_password_provider_enabled": true,
+    "public_signup_enabled": false,
+    "auth_settings_confirmed_by_owner": true,
+    "organization_id": "lcyzbsxrpqkvdyoqxcuu",
+    "organization_plan": "free",
+    "organization_plan_confirmed_via_api": true,
+    "observed_database_bytes": 11835059,
+    "services_paused_by_this_work": false
+  },
+  "edge_application_secrets": {
+    "APP_ORIGIN": "https://intenciones.torrealbayeison334.workers.dev",
+    "private_value_names_only": [
+      "RATE_LIMIT_SECRET",
+      "INTERCESSOR_REGISTRATION_SECRET",
+      "TURNSTILE_SECRET_KEY"
+    ],
+    "private_values_stored_in_repository": false
+  },
+  "turnstile": {
+    "hostname": "intenciones.torrealbayeison334.workers.dev",
+    "mode": "managed",
+    "secret_value_stored_in_repository": false
+  },
+  "retention": {
+    "cron_job": "misterio-retention",
+    "schedule": "*/5 * * * *",
+    "command": "select public.cleanup_personal_data();",
+    "read_message_lifetime_hours": 48,
+    "expiry_reference": "first opening",
+    "unread_messages_expire": false
+  },
+  "aggregate_checkpoint": {
+    "petitions": 6,
+    "gratitudes": 3,
+    "petitions_read": 6,
+    "gratitudes_read": 3,
+    "registered_intercessors": 1,
+    "total_messages": 9,
+    "note": "Historical snapshot only; not a backup of users or messages. Never replace live totals with these values."
+  },
+  "recovery": {
+    "new_code_hex_characters": 24,
+    "group_size": 6,
+    "old_48_character_codes_accepted": true,
+    "stored_value": "SHA-256 only"
+  },
+  "validation": {
+    "astro_typescript": "passed",
+    "unit_and_database_cases": 21,
+    "full_browser_cases_last_passed": 13,
+    "total_counter_followup_browser_test": "passed"
+  },
+  "unresolved": [
+    "Latest Cloudflare deployment for corrected total must be checked in the dashboard",
+    "Private backup of database and Auth has not been created",
+    "Privacy page still requires responsible contact and backup retention"
+  ],
+  "billing": {
+    "supabase_current_base_usd_per_month": 0,
+    "cloudflare_required_plan": "Free is sufficient for this static site",
+    "cloudflare_subscription_verified": false,
+    "invoices_reviewed": false,
+    "cost_and_pause_guide": "docs/COSTOS-Y-PAUSA.md"
+  }
+}

@@ -6,6 +6,10 @@ El formulario pide **nombre o alias, tipo y texto**. No solicita correo ni enví
 
 ## Desarrollo y validación
 
+Para conservar el proyecto o reconstruirlo en otro Supabase, ver [la guía de continuidad y respaldo](docs/CONTINUIDAD.md). Incluye la configuración pública vigente y un instalador SQL para una base nueva. GitHub no contiene los mensajes, las cuentas reales ni los secretos privados.
+
+Ver también [costos y pausa durante un mes](docs/COSTOS-Y-PAUSA.md): Supabase Free está confirmado; Cloudflare Free alcanza para la configuración estática utilizada.
+
 Node.js 22.12 o posterior:
 
 ```sh

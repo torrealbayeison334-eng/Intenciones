@@ -2,7 +2,7 @@
 
 Para el proyecto nuevo `nlfujsfwocdferdjxttm`, consultar primero [el estado de activación y su historial de migraciones](ACTIVACION-INTENCIONES.md). La base y las funciones ya están desplegadas; no repetir las migraciones iniciales.
 
-El código permite demostración sin servicios externos. Aplicar estos pasos en el proyecto Supabase y el sitio Cloudflare del responsable; no introducir contraseñas ni claves privadas en el chat, GitHub o el navegador.
+El código permite demostración sin servicios externos. Aplicar estos pasos en el proyecto Supabase y el sitio Cloudflare del responsable; no introducir contraseñas ni claves privadas en el chat, GitHub ni el código público del navegador. Configurarlas en los paneles privados de los proveedores o mediante sus CLI.
 
 ## 1. Actualizar la base de datos
 
@@ -24,7 +24,7 @@ Configurar en Edge Functions:
 
 | Secreto | Uso |
 | --- | --- |
-| `APP_ORIGIN` | Origen HTTPS exacto del sitio, por ejemplo `https://yeivt.torrealbaviktor.workers.dev`, sin barra final. |
+| `APP_ORIGIN` | Origen HTTPS exacto del sitio: `https://intenciones.torrealbayeison334.workers.dev`, sin barra final. |
 | `TURNSTILE_SECRET_KEY` | Clave privada del widget de verificación de intenciones. |
 | `RATE_LIMIT_SECRET` | Secreto aleatorio independiente, de al menos 32 bytes, para derivar identificadores de red mediante HMAC. |
 | `INTERCESSOR_REGISTRATION_SECRET` | Clave aleatoria de invitación, de 32 a 256 caracteres; usar 64 caracteres hexadecimales. |

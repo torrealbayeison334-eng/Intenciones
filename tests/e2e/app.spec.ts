@@ -61,8 +61,8 @@ test('footer Intercesor opens and focuses access even when the URL hash is uncha
 });
 test('opening marks a message read, keeps it available and never counts a reread twice',async({page})=>{
   await page.goto('/#intercesor');await page.getByRole('button',{name:'Explorar la bandeja'}).click();
-  const items=page.locator('#inbox-list .inbox-item');await expect(items).toHaveCount(2);await expect(page.locator('#stat-total-petitions')).toHaveText('2');await expect(page.locator('#stat-petitions-read')).toHaveText('1 leídas');
-  await items.first().click();const dialog=page.getByRole('dialog');await expect(dialog).toBeVisible();await expect(dialog).toContainText('Por la salud de mi familia');await expect(page.locator('#stat-total-petitions')).toHaveText('2');await expect(page.locator('#stat-petitions-read')).toHaveText('2 leídas');
+  const items=page.locator('#inbox-list .inbox-item');await expect(items).toHaveCount(2);await expect(page.locator('#stat-total-messages')).toHaveText('3');await expect(page.locator('#stat-petitions-read')).toHaveText('1 leídas');
+  await items.first().click();const dialog=page.getByRole('dialog');await expect(dialog).toBeVisible();await expect(dialog).toContainText('Por la salud de mi familia');await expect(page.locator('#stat-total-messages')).toHaveText('3');await expect(page.locator('#stat-petitions-read')).toHaveText('2 leídas');
   await page.getByRole('button',{name:'Cerrar mensaje',exact:true}).click();await expect(items).toHaveCount(1);
   await page.getByRole('button',{name:'Leídos',exact:true}).click();await expect(items).toHaveCount(2);await expect(items.first()).toContainText('Leído');
   await items.first().click();await expect(dialog).toBeVisible();await expect(page.locator('#stat-petitions-read')).toHaveText('2 leídas');await page.keyboard.press('Escape');await expect(dialog).not.toBeVisible();

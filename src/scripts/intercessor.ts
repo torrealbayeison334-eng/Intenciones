@@ -66,7 +66,7 @@ const put=(id:string,text:string)=>{root.querySelector(id)!.textContent=text;};
 function renderStats(){
   put('#stat-petitions',String(totals.petitions));put('#stat-gratitudes',String(totals.gratitudes));
   put('#stat-petitions-read',`${totals.petitions_read} leídas`);put('#stat-gratitudes-read',`${totals.gratitudes_read} leídos`);
-  put('#stat-total-petitions',String(totals.petitions));put('#stat-intercessors',String(totals.intercessors));
+  put('#stat-total-messages',String(Number(totals.petitions)+Number(totals.gratitudes)));put('#stat-intercessors',String(totals.intercessors));
 }
 function render(){
   list.replaceChildren();

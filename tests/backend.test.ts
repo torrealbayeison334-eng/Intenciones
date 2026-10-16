@@ -22,7 +22,9 @@ test('usernames have no spaces; passwords and recovery codes are validated',asyn
   assert.equal(username('Ana_Maria'),'ana_maria');
   for(const name of ['Ana María',' conespacio','ana maria','x','<script>'])assert.throws(()=>username(name),HttpError);
   assert.throws(()=>password('short'),HttpError);assert.equal(password('a'.repeat(12)).length,12);
-  const one=recoveryCode(),two=recoveryCode();assert.notEqual(one,two);assert.equal(normalizeCode(one.toUpperCase()).length,48);assert.equal((await digest(normalizeCode(one))).length,64);
+  const one=recoveryCode(),two=recoveryCode();assert.notEqual(one,two);assert.match(one,/^[a-f0-9]{6}(?:-[a-f0-9]{6}){3}$/);assert.equal(normalizeCode(one.toUpperCase()).length,24);assert.equal((await digest(normalizeCode(one))).length,64);
+  assert.equal(normalizeCode('ABCDEF12-'.repeat(5)+'ABCDEF12'),'abcdef12'.repeat(6));
+  for(const invalid of ['a'.repeat(12),'a'.repeat(23),'a'.repeat(25),'g'.repeat(24)])assert.throws(()=>normalizeCode(invalid),HttpError);
 });
 const secret='s'.repeat(64);
 function dependencies(overrides:Partial<AuthDeps>={}):AuthDeps{return{origin:'https://misterio.example',registrationSecret:()=>secret,limit:async()=>{},db:async()=>[],auth:async()=>({id:'test-user'}),...overrides};}
@@ -53,12 +55,13 @@ test('throttling and origin checks happen before an Auth write',async()=>{
   const body={action:'register',username:'ana',password:'a'.repeat(12),secret};
   assert.equal((await handler(request(body))).status,429);assert.equal((await handler(request(body,'https://foreign.example'))).status,403);assert.equal(writes,0);
 });
-test('recovery releases its reservation on Auth failure and returns a new code on success',async()=>{
-  for(const fail of [true,false]){
+test('recovery accepts existing long codes, releases reservations on Auth failure and rotates to a short code',async()=>{
+  for(const [fail,code] of [[true,recoveryCode()],[false,recoveryCode()],[false,'abcdef12-'.repeat(5)+'abcdef12']] as const){
     const writes:any[]=[];const handler=intercessorAuth(dependencies({db:async(path,_method,body)=>{writes.push({path,body});return path==='rpc/reserve_recovery'?'user':true;},auth:async()=>{if(fail)throw new Error('Auth failed');return{};}}));
-    const response=await handler(request({action:'recover',username:'ana',password:'a'.repeat(12),code:recoveryCode()}));
+    const response=await handler(request({action:'recover',username:'ana',password:'a'.repeat(12),code}));
     assert.equal(response.status,fail?503:200);assert.equal(writes[1].body.p_success,!fail);
-    if(!fail){const result=await response.json();assert.equal(await digest(normalizeCode(result.recoveryCode)),writes[0].body.p_next_hash);}
+    assert.equal(writes[0].body.p_hash,await digest(normalizeCode(code)));
+    if(!fail){const result=await response.json();assert.equal(normalizeCode(result.recoveryCode).length,24);assert.equal(await digest(normalizeCode(result.recoveryCode)),writes[0].body.p_next_hash);}
   }
 });
 

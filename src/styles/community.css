@@ -12,6 +12,11 @@
 .community-intro{max-width:680px;margin-bottom:30px}
 .community-intro .eyebrow{margin-bottom:14px}
 .community-intro h2{font-size:clamp(2.1rem,4vw,3.1rem)}
+.intercessor-intro h1{font-size:clamp(2.3rem,4vw,3.3rem);font-weight:500}
+.intercessor-marian{padding-block:24px 70px;text-align:center}
+.intercessor-marian figure{margin:0 auto;max-width:340px}
+.intercessor-marian img{width:100%;height:auto}
+.intercessor-marian figcaption{margin-top:18px;color:var(--muted);font-size:.8rem;letter-spacing:.03em}
 .community-intro>p:last-child{max-width:540px;color:var(--muted);font-size:.95rem}
 .community-card{border:1px solid var(--line);border-radius:12px;background:#fffefa;overflow:hidden}
 .community-tabs{display:flex;background:#f0f1e9;border-bottom:1px solid var(--line);gap:0;padding-inline:28px}

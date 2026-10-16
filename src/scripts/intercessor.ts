@@ -12,12 +12,27 @@ const reader=root.querySelector<HTMLDialogElement>('#intention-reader')!;
 const loginForm=root.querySelector<HTMLFormElement>('#intercessor-login-form')!;
 const more=root.querySelector<HTMLButtonElement>('#inbox-more')!;
 const tabs=Array.from(document.querySelectorAll<HTMLButtonElement>('.community-tabs [role=tab]'));
+let intercessorActive=false;
+let authGeneration=0;
 function activateTab(id:string,focus=false) {
+  if(intercessorActive) id='tab-intercessor';
   tabs.forEach(tab=>{
     const active=tab.id===id; tab.setAttribute('aria-selected',String(active));tab.tabIndex=active?0:-1;
     document.getElementById(tab.getAttribute('aria-controls')!)!.hidden=!active;
     if(active&&focus) tab.focus();
   });
+}
+function setIntercessorView(active:boolean){
+  intercessorActive=active;
+  document.querySelectorAll<HTMLElement>('[data-public-home]').forEach(element=>element.hidden=active);
+  document.querySelectorAll<HTMLElement>('[data-intercessor-home]').forEach(element=>element.hidden=!active);
+  document.querySelector<HTMLButtonElement>('#tab-intention')!.disabled=active;
+  const panel=document.querySelector<HTMLElement>('#panel-intercessor')!;
+  panel.setAttribute('role',active?'region':'tabpanel');
+  panel.setAttribute('aria-labelledby',active?'inbox-title':'tab-intercessor');
+  document.querySelector('#intenciones')!.setAttribute('aria-labelledby',active?'intercessor-title':'intentions-title');
+  root.setAttribute('aria-label',active?'Bandeja de Intercesor':'Acceso de Intercesor');
+  activateTab('tab-intercessor');
 }
 tabs.forEach((tab,index)=>{
   tab.addEventListener('click',()=>activateTab(tab.id));
@@ -28,7 +43,7 @@ tabs.forEach((tab,index)=>{
     if(next!==undefined){event.preventDefault();activateTab(tabs[next].id,true);}
   });
 });
-function fromHash(){if(location.hash==='#intercesor') activateTab('tab-intercessor');}
+function fromHash(){if(intercessorActive||location.hash==='#intercesor') activateTab('tab-intercessor');}
 window.addEventListener('hashchange',fromHash);fromHash();
 const demoEntries:Entry[]=[
   {id:'demo-1',name:'María',kind:'petition',created_at:new Date().toISOString(),read_at:null,message:'Por la salud de mi familia y por quienes hoy necesitan encontrar esperanza.'},
@@ -109,17 +124,21 @@ root.querySelectorAll<HTMLButtonElement>('[data-inbox-filter]').forEach(button=>
 }));
 more.addEventListener('click',()=>{limit+=50;load().catch(error=>message(status,errorText(error),true));});
 root.querySelector('#inbox-refresh')!.addEventListener('click',()=>load().catch(error=>message(status,errorText(error),true)));
-async function enter(){
+async function enter(focus=false){
   if(entering)return;entering=true;
+  const generation=authGeneration;
   try {
     if(!demoMode){
       const {data:{session},error}=await supabase!.auth.getSession();if(error)throw error;if(!session)return;
       const member=await supabase!.from('members').select('display_name,role,approved').eq('user_id',session.user.id).maybeSingle();
+      if(generation!==authGeneration)return;
       if(member.error)throw new Error('No pudimos verificar tu acceso. Intentá nuevamente.');
       if(!member.data?.approved||!['priest','intercessor'].includes(member.data.role)){await supabase!.auth.signOut();throw new Error('Esta cuenta no tiene acceso a Intercesor.');}
       put('#intercessor-welcome',`Bienvenido, ${member.data.display_name}`);
     } else put('#intercessor-welcome','Demostración · Mensajes ficticios. Los cambios se reinician al recargar.');
-    await load();login.hidden=true;dashboard.hidden=false;loginForm.reset();
+    await load();if(generation!==authGeneration)return;
+    login.hidden=true;dashboard.hidden=false;loginForm.reset();setIntercessorView(true);
+    if(focus)root.querySelector<HTMLElement>('#inbox-title')!.focus();
   } finally{entering=false;}
 }
 loginForm.addEventListener('submit',async event=>{
@@ -130,14 +149,16 @@ loginForm.addEventListener('submit',async event=>{
   try{
     const session=await invoke<{access_token:string;refresh_token:string}>('intercessor-auth',{action:'login',username:data.get('username'),password:data.get('password')});
     const result=await supabase!.auth.setSession(session);if(result.error)throw new Error('No pudimos iniciar tu sesión. Intentá nuevamente.');
-    await enter();message(authStatus,'');
+    await enter(true);message(authStatus,'');
   }catch(error){message(authStatus,errorText(error),true);}finally{button.disabled=false;}
 });
 const demoButton=root.querySelector<HTMLButtonElement>('#intercessor-demo')!;demoButton.hidden=!demoMode;
-demoButton.addEventListener('click',()=>enter().catch(error=>message(authStatus,errorText(error),true)));
+demoButton.addEventListener('click',()=>enter(true).catch(error=>message(authStatus,errorText(error),true)));
 function leave(){
+  authGeneration++;
   sequence++;loading=false;reader.close();list.replaceChildren();entries=[];dashboard.hidden=true;login.hidden=false;
   root.querySelectorAll('.community-stats strong').forEach(el=>el.textContent='0');put('#intercessor-welcome','');message(status,'');
+  setIntercessorView(false);
 }
 root.querySelector('#intercessor-logout')!.addEventListener('click',async()=>{
   leave();if(supabase){const {error}=await supabase.auth.signOut();if(error)message(authStatus,'No pudimos cerrar la sesión del servidor. Volvé a intentarlo.',true);}

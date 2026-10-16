@@ -23,7 +23,7 @@ Sin configuración externa hay una **demostración identificada**. Los formulari
 
 - Ingreso con usuario sin espacios y contraseña. Usuarios de 3–32 caracteres: letras sin tilde, números, punto, guion y guion bajo; no distingue mayúsculas. Contraseñas de 12–128 caracteres.
 - Alta inmediata con un enlace de invitación que contiene una clave comprobada en el servidor. No hay enlace público al registro, aprobación manual ni correo de validación. La dirección por sí sola no concede acceso.
-- Código de recuperación aleatorio entregado una sola vez, con descarga opcional. Se conserva solo su SHA-256. Usarlo cambia la contraseña y reemplaza el código.
+- Código de recuperación aleatorio de 24 caracteres, entregado una sola vez con descarga opcional. Los códigos anteriores de 48 caracteres también funcionan. Se conserva solo su SHA-256. Usarlo cambia la contraseña y reemplaza el código.
 - Bandeja compartida: todos los intercesores vigentes ven todos los mensajes disponibles, también los anteriores al alta. Al abrir uno queda leído para todos. La primera lectura se registra atómicamente una sola vez.
 - Los mensajes leídos permanecen disponibles 48 horas **desde la primera apertura**. Volver a abrir no extiende el plazo. No hay acciones para archivar, mover, eliminar o completar.
 - Se puede filtrar por Sin leer, Todos y Leídos. La bandeja se actualiza cada 15 segundos mientras está visible y al regresar a la pestaña; cada apertura consulta el estado del servidor.

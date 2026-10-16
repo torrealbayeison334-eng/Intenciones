@@ -27,12 +27,14 @@ const demo = import.meta.env.PUBLIC_DEMO_MODE === 'true' || !import.meta.env.PUB
     <header class="header wrap">
       <a class="brand" href="/" aria-label={`${site.name}, inicio`}><span class="brand-mark" aria-hidden="true">✦</span><span><strong>{site.name}</strong><br /><small>Unidos en oración</small></span></a>
       <div class="header-actions">
-        <a class="header-intention" href="/#intenciones">Dejar una intención <span aria-hidden="true">→</span></a>
+        <a class="header-intention" href="/#intenciones" data-public-home>Dejar una intención <span aria-hidden="true">→</span></a>
+        <a class="header-intention" href="/#intercesor" data-intercessor-home hidden>Mi bandeja <span aria-hidden="true">→</span></a>
         <details class="menu" id="main-menu">
           <summary>Menú <span aria-hidden="true">☰</span></summary>
           <nav aria-label="Menú principal">
-            {prayers.map(prayer => <a href={`/oraciones/${prayer.slug}/`}><span class="menu-number">0{prayer.number}</span>{prayer.title}</a>)}
-            <a href="/#intenciones"><span class="menu-number">08</span>Intenciones</a>
+            {prayers.map(prayer => <a href={`/oraciones/${prayer.slug}/`} data-public-home><span class="menu-number">0{prayer.number}</span>{prayer.title}</a>)}
+            <a href="/#intenciones" data-public-home><span class="menu-number">08</span>Intenciones</a>
+            <a href="/#intercesor" data-intercessor-home hidden>Mi bandeja</a>
             <a href="/templos/"><span class="menu-number">09</span>Templos marianos</a>
           </nav>
         </details>

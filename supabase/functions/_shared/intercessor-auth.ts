@@ -14,12 +14,13 @@ export async function digest(value: string): Promise<string> {
   return Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(value))),b=>b.toString(16).padStart(2,'0')).join('');
 }
 export function recoveryCode(): string {
-  const hex=Array.from(crypto.getRandomValues(new Uint8Array(24)),b=>b.toString(16).padStart(2,'0')).join('');
-  return hex.match(/.{8}/g)!.join('-');
+  // 96 random bits, displayed in four groups. Existing 192-bit codes remain valid.
+  const hex=Array.from(crypto.getRandomValues(new Uint8Array(12)),b=>b.toString(16).padStart(2,'0')).join('');
+  return hex.match(/.{6}/g)!.join('-');
 }
 export function normalizeCode(value: unknown): string {
   const code=typeof value==='string'?value.replace(/[\s-]/g,'').toLowerCase():'';
-  if(!/^[a-f0-9]{48}$/.test(code)) throw new HttpError(400,'Revisa tu usuario y código de recuperación.');
+  if(!/^(?:[a-f0-9]{24}|[a-f0-9]{48})$/.test(code)) throw new HttpError(400,'Revisa tu usuario y código de recuperación.');
   return code;
 }
 async function sameSecret(a: string,b: string): Promise<boolean> {

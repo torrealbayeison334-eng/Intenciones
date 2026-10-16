@@ -3,12 +3,16 @@ for(const width of [320,390,768,1440]){
   test(`new homepage has one image, compact prayers and no overflow at ${width}px`,async({page})=>{
     await page.setViewportSize({width,height:900});await page.goto('/');
     await expect(page.getByRole('heading',{level:1})).toContainText('en oración');
-    await expect(page.locator('main img')).toHaveCount(1);await expect(page.locator('.prayer-links li')).toHaveCount(7);
+    await expect(page.locator('main img:visible')).toHaveCount(1);await expect(page.locator('.prayer-links li')).toHaveCount(7);
     await expect(page.locator('.gallery-section')).toHaveCount(0);
     await page.locator('#main-menu summary').click();const nav=page.getByRole('navigation',{name:'Menú principal'});await expect(nav.getByRole('link')).toHaveCount(9);
     await nav.getByRole('link',{name:'Intenciones',exact:false}).click();await expect(page).toHaveURL(/#intenciones$/);
     expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
     await page.getByRole('tab',{name:'Intercesor',exact:true}).click();await page.getByRole('button',{name:'Explorar la bandeja'}).click();
+    await expect(page.getByRole('tablist')).toBeHidden();await expect(page.locator('#panel-intention')).toBeHidden();
+    await expect(page.locator('.prayer-library')).toBeHidden();await expect(page.locator('.marian-hero')).toBeHidden();
+    await expect(page.locator('.intercessor-marian img')).toBeVisible();await expect(page.locator('main img:visible')).toHaveCount(1);
+    await expect(page.getByRole('heading',{level:1})).toContainText('Acompañamos');
     expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
   });
 }
@@ -19,6 +23,20 @@ test('public form keeps petition/gratitude, removes email and validates consent 
   await form.getByLabel('Tu intención',{exact:false}).fill('Un agradecimiento ficticio para comprobar este formulario.');
   await form.getByRole('button',{name:'Enviar mi intención'}).click();await expect(form.getByRole('status')).toHaveText('');
   await form.getByRole('checkbox').check();await form.getByRole('button',{name:'Enviar mi intención'}).click();await expect(form.getByRole('status')).toContainText('No se guardaron datos');expect(external).toBe(0);
+});
+test('signed-in view stays in the inbox and restores the public page on logout',async({page})=>{
+  await page.goto('/#intercesor');await page.getByRole('button',{name:'Explorar la bandeja'}).click();
+  await expect(page.locator('#inbox-title')).toBeFocused();
+  await page.evaluate(()=>{document.querySelector<HTMLButtonElement>('#tab-intention')!.click();location.hash='intenciones';});
+  await expect(page.locator('#panel-intention')).toBeHidden();await expect(page.locator('#intercessor-dashboard')).toBeVisible();
+  await page.locator('#main-menu summary').click();const nav=page.getByRole('navigation',{name:'Menú principal'});
+  await expect(nav.getByRole('link',{name:/Ave María|Salve|Rosario|Intenciones/})).toHaveCount(0);
+  await expect(nav.getByRole('link',{name:'Mi bandeja'})).toBeVisible();await nav.getByRole('link',{name:'Mi bandeja'}).click();
+  await page.getByRole('button',{name:'Cerrar sesión'}).click();
+  await expect(page.getByRole('tab',{name:'Intención',exact:true})).toBeVisible();
+  await expect(page.locator('.prayer-library')).toBeVisible();await expect(page.locator('.marian-hero')).toBeVisible();
+  await expect(page.locator('.intercessor-marian')).toBeHidden();
+  await page.getByRole('tab',{name:'Intención',exact:true}).click();await expect(page.locator('.public-form')).toBeVisible();
 });
 test('tabs support keyboard and direct Intercesor links',async({page})=>{
   await page.goto('/');const first=page.getByRole('tab',{name:'Intención',exact:true}),second=page.getByRole('tab',{name:'Intercesor',exact:true});

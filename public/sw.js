@@ -1,5 +1,5 @@
 // Only this explicit list of public, non-personal resources can enter CacheStorage.
-const CACHE = 'misterio-public-v4';
+const CACHE = 'misterio-public-v5';
 const PUBLIC_PATHS = [
   '/', '/templos/', '/privacidad/', '/manifest.webmanifest', '/icon.svg',
   '/icons/icon-192.png', '/icons/icon-512.png',

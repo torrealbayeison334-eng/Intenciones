@@ -6,6 +6,8 @@ El formulario contiene nombre/alias, petición o agradecimiento y texto. Se cons
 
 La sección tiene dos solapas: Intención e Intercesor. Intercesor usa usuario sin espacios y contraseña. El alta está en una ruta no enlazada, requiere una clave comprobada por el servidor y habilita la cuenta inmediatamente. No hay aprobación ni verificación por correo. Se entrega un código de recuperación descargable, guardado solo como huella en la base.
 
+Al ingresar como intercesor, el inicio pasa a una vista centrada en la bandeja: se ocultan las solapas, el formulario público y las oraciones, y una representación simbólica de María ocupa el lugar de la lista de oraciones. La portada pública se oculta para evitar repetir la imagen. El estado se aplica también al recuperar una sesión existente; al cerrarla se restaura el inicio público. Los códigos de recuperación nuevos tienen 24 caracteres y los anteriores siguen siendo válidos.
+
 Todos los intercesores vigentes ven todos los mensajes disponibles, incluidos los anteriores a su alta. Abrir un mensaje es su única acción sobre el contenido: lo marca leído para todos. Hay filtros, actualización y cierre de lectura, sin archivo, borrado, movimiento o confirmación de oración. Se puede volver a abrir cuantas veces se quiera dentro del plazo.
 
 Las 48 horas se cuentan desde la primera apertura y nunca se renuevan. La base excluye mensajes vencidos y un cron elimina físicamente cada cinco minutos. Los no leídos permanecen hasta que se abran. Los contadores privados son acumulados: recibidas por tipo, primeras lecturas por tipo y total de intercesores registrados. Una lectura no certifica oración. Los contadores iniciales solo pueden reconstruir registros aún existentes en la migración.

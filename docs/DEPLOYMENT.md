@@ -98,7 +98,7 @@ El fragmento no viaja al servidor al abrir la página y se retira de la barra al
 
 Para invalidar los enlaces anteriores, reemplazar `INTERCESSOR_REGISTRATION_SECRET` y distribuir la URL nueva. Los usuarios ya registrados conservan su acceso. La clave reutilizable permite crear cuentas a cualquiera que reciba el enlace; no es una invitación personal de un solo uso.
 
-Al registrarse se entrega un código de recuperación de 192 bits, descargable como texto privado. Solo se conserva su SHA-256. Recuperar requiere usuario, código y contraseña nueva; el código se reserva durante la operación y se reemplaza al terminar. Si Auth falla, se libera la reserva. Una interrupción entre Auth y el cierre de la reserva puede dejar la contraseña cambiada: conservar el código anterior y reintentar pasados dos minutos. Nunca registrar contraseñas, claves de invitación, códigos ni cuerpos de estas solicitudes en logs o analítica.
+Al registrarse se entrega un código de recuperación de 96 bits: 24 caracteres hexadecimales, agrupados de seis en seis y descargables como texto privado. Los códigos anteriores de 48 caracteres siguen siendo válidos; al usarlos se reemplazan por uno corto. Solo se conserva su SHA-256. Recuperar requiere usuario, código y contraseña nueva; el código se reserva durante la operación y se reemplaza al terminar. Si Auth falla, se libera la reserva. Una interrupción entre Auth y el cierre de la reserva puede dejar la contraseña cambiada: conservar el código anterior y reintentar pasados dos minutos. Nunca registrar contraseñas, claves de invitación, códigos ni cuerpos de estas solicitudes en logs o analítica.
 
 ## 7. Verificar en el servicio real
 

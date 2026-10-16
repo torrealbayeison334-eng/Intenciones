@@ -1,10 +1,12 @@
 # Costos y pausa durante un mes
 
-Revisión del 15 de octubre de 2026. Importes en USD mensuales, antes de impuestos. La factura depende del plan contratado y de los consumos reales; no se consultaron facturas ni el panel privado de Cloudflare.
+Revisión del 15 de octubre de 2026. Importes en USD mensuales, antes de impuestos. El responsable compartió la pantalla de Billing de Cloudflare: «Workers Free — Active». No se consultaron facturas ni se accedió directamente a su panel privado.
 
 ## Estado comprobado
 
 La API de Supabase confirmó la organización `Intenciones` (`lcyzbsxrpqkvdyoqxcuu`) en plan **Free**, `tier_free`. No es una prueba temporal de Pro. El proyecto `nlfujsfwocdferdjxttm` estaba activo, con una base de unos 11 MB, una cuenta y nueve mensajes. El total histórico es 6 peticiones + 3 agradecimientos = 9.
+
+Cloudflare Workers Free está activo, confirmado por la pantalla que compartió el responsable. El costo base de ambos servicios con el uso actual es **US$0/mes**.
 
 La arquitectura usa Cloudflare para archivos estáticos, imágenes y Turnstile; Supabase para Auth, SQL, dos Edge Functions y cron. No utiliza correo de pago, Supabase Storage para las fotos, D1, KV ni servicios de IA en el sitio.
 
@@ -12,11 +14,11 @@ La arquitectura usa Cloudflare para archivos estáticos, imágenes y Turnstile; 
 
 | Escenario | Cloudflare | Supabase | Total base |
 | --- | --- | --- | --- |
-| Configuración actual si Workers está en Free | $0 | $0, plan confirmado | $0/mes |
+| Configuración actual, ambos Free confirmados | $0 | $0 | $0/mes |
 | Supabase Pro con un proyecto Micro, Cloudflare Free | $0 | Desde $25 | Desde $25/mes |
 | Ambos de pago, un Micro | Desde $5 | Desde $25 | Desde $30/mes |
 
-El primer escenario alcanza para las funciones desarrolladas con el uso de prueba actual. Hay que confirmar en Cloudflare → Billing / Subscriptions que Workers está en Free; una suscripción Paid contratada mantiene su cuota aunque el sitio sea estático.
+El primer escenario alcanza para las funciones desarrolladas con el uso de prueba actual. La oferta «Upgrade to Workers Paid» no implica tener ese plan contratado: la suscripción activa indicada es Workers Free. No es necesario contratar Paid para las funciones actuales.
 
 Referencias: [Supabase Pricing](https://supabase.com/pricing), [Workers Pricing](https://developers.cloudflare.com/workers/platform/pricing/).
 

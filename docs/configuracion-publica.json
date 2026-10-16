@@ -15,7 +15,8 @@
     "build_command": "npm run build",
     "deploy_command": "npx wrangler deploy",
     "assets_directory": "dist",
-    "node_version": "22"
+    "node_version": "22",
+    "subscription_plan": "Workers Free"
   },
   "frontend_build_variables": {
     "PUBLIC_DEMO_MODE": "false",
@@ -116,8 +117,11 @@
   "billing": {
     "supabase_current_base_usd_per_month": 0,
     "cloudflare_required_plan": "Free is sufficient for this static site",
-    "cloudflare_subscription_verified": false,
+    "cloudflare_subscription_verified": true,
     "invoices_reviewed": false,
-    "cost_and_pause_guide": "docs/COSTOS-Y-PAUSA.md"
+    "cost_and_pause_guide": "docs/COSTOS-Y-PAUSA.md",
+    "cloudflare_verification_source": "Owner-provided Billing screen: Workers Free — Active",
+    "cloudflare_current_base_usd_per_month": 0,
+    "combined_current_base_usd_per_month": 0
   }
 }

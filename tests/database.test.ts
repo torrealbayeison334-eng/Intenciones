@@ -1,6 +1,6 @@
 import test,{before,after} from 'node:test';
 import assert from 'node:assert/strict';
-import {readFile} from 'node:fs/promises';
+import {readFile,readdir} from 'node:fs/promises';
 import {randomUUID} from 'node:crypto';
 import {PGlite} from '@electric-sql/pglite';
 let db:PGlite;
@@ -24,6 +24,10 @@ before(async()=>{
   }
   await db.query('insert into public.email_jobs(intention_id) values($1)',[legacyCompleted]);
   await db.exec(await readFile(new URL('../supabase/migrations/202610150001_intercessor_inbox.sql',import.meta.url),'utf8'));
+  const migrations=new URL('../supabase/migrations/',import.meta.url);
+  for(const name of (await readdir(migrations)).filter(name=>name.endsWith('.sql') && name>'202610150001_intercessor_inbox.sql').sort()){
+    await db.exec(await readFile(new URL(name,migrations),'utf8'));
+  }
   for(const [id,approved] of [[a,true],[b,true],[outsider,false]] as const){
     await db.query('insert into auth.users(id,email) values($1,$2)',[id,`${id}@example.com`]);
     await db.query('insert into public.members(user_id,display_name,role,approved) values($1,$2,$3,$4)',[id,'Intercesor de prueba','intercessor',approved]);

@@ -6,9 +6,11 @@ El código permite demostración sin servicios externos. Aplicar estos pasos en 
 
 ## 1. Actualizar la base de datos
 
-Respaldar la base antes de migrar un servicio con datos reales. Para una instalación nueva, aplicar las tres migraciones de `supabase/migrations/` en orden. En una existente que ya tenga las dos de octubre 6, aplicar solamente:
+Respaldar la base antes de migrar un servicio con datos reales. Para una instalación nueva, aplicar todas las migraciones de `supabase/migrations/` en orden. En una existente que ya tenga las dos de octubre 6, comenzar por:
 
 `supabase/migrations/202610150001_intercessor_inbox.sql`
+
+Después aplicar `20261016003904_scope_community_counter_updates.sql`. Esta corrección agrega `WHERE singleton = true` a las actualizaciones de los contadores. Es necesaria para las conexiones HTTP de PostgREST que cargan `safeupdate`; sin ella, el alta, el envío y la primera lectura fallan con SQLSTATE `21000`. No requiere cambiar secretos ni recompilar la web.
 
 Esta migración elimina la cola de correos y los correos de contacto, desactiva las transiciones de asignar/completar/devolver y crea lectura compartida, contadores acumulados y credenciales de recuperación. Los mensajes existentes se conservan hasta la retención aplicable. Los asignados se consideran leídos desde la migración; los completados conservan `completed_at` como fecha de lectura. Los mensajes completados hace más de 48h vencen al activar la migración. Los históricos se inicializan con los registros todavía existentes.
 

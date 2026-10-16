@@ -17,12 +17,16 @@ Todas las tablas tienen RLS. El rol anónimo no puede consultarlas ni ejecutar l
 
 Los avisos del asesor sobre tablas internas sin políticas son intencionales: no tienen permisos para clientes. También identifica las dos funciones `SECURITY DEFINER` autorizadas para el cliente; ambas comprueban la membresía vigente. Referencia: https://supabase.com/docs/guides/database/database-linter?lint=0029_authenticated_security_definer_function_executable . Los avisos de índices corresponden a la tabla heredada `access_requests`, fuera del circuito nuevo.
 
-## Pendiente antes de publicar
+## Publicación y comprobación pendiente
 
-1. Guardar los cuatro secretos de aplicación en este proyecto nuevo: `APP_ORIGIN`, `RATE_LIMIT_SECRET`, `INTERCESSOR_REGISTRATION_SECRET` y `TURNSTILE_SECRET_KEY`. Los secretos de los proyectos anteriores no se trasladan automáticamente.
-2. Revisar Auth: contraseña habilitada, registro público deshabilitado; el alta autorizada usa Admin Auth desde la función.
-3. Conectar el despliegue de Cloudflare al nuevo repositorio y configurar las variables públicas de este proyecto, el widget y `PUBLIC_DEMO_MODE=false`. Confirmar el dominio final y usarlo también en `APP_ORIGIN` y Turnstile.
-4. Probar registro, ingreso, recuperación y envío desde el navegador real. El despliegue de las funciones por sí solo no verifica secretos ni Auth ni publica el sitio.
+Actualización del 15 de octubre, después de la primera publicación: el sitio nuevo está en `https://intenciones.torrealbayeison334.workers.dev`. El responsable confirmó la carga de los cuatro secretos, la configuración de las variables públicas, la desactivación del registro público de Auth y una compilación con `PUBLIC_DEMO_MODE=false`. Sigue pendiente completar el alta y el recorrido desde el navegador real.
+
+Se corrigió el fallo del alta mediante la migración remota `scope_community_counter_updates` (archivo local `20261016003904_scope_community_counter_updates.sql`). Los registros mostraban Auth creando y retirando la cuenta al fallar `register_intercessor` con SQLSTATE `21000`; las sesiones de `authenticator` precargan `safeupdate`. Ahora las tres funciones que incrementan contadores limitan la actualización a la fila `singleton = true`. Pasaron las pruebas locales y la transacción de prueba en la base remota; no quedaron cuentas ni totales de prueba. La herramienta SQL administrativa no permite cargar `safeupdate` manualmente, por lo que la comprobación completa a través de HTTP requiere el próximo intento de alta del responsable. No se desactivó esa protección.
+
+1. Secretos de aplicación: el responsable confirmó `APP_ORIGIN`, `RATE_LIMIT_SECRET`, `INTERCESSOR_REGISTRATION_SECRET` y `TURNSTILE_SECRET_KEY` en el proyecto nuevo. Los valores privados no se consultan desde esta integración.
+2. Auth: el responsable confirmó registro público deshabilitado y proveedor Email habilitado para las contraseñas; el alta autorizada usa Admin Auth desde la función.
+3. Cloudflare: repositorio nuevo publicado con configuración estática de Workers. El responsable confirmó las variables públicas del proyecto, el widget y `PUBLIC_DEMO_MODE=false`.
+4. Pendiente: probar registro, ingreso, recuperación y envío desde el navegador real. El despliegue de las funciones por sí solo no verifica todo este recorrido.
 
 Ver [DEPLOYMENT.md](DEPLOYMENT.md) para la configuración completa.
 
